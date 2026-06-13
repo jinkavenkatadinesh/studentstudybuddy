@@ -1,0 +1,36 @@
+stages:
+  - lint
+  - build
+
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+
+cache:
+  paths:
+    - .cache/pip
+    - venv/
+
+before_script:
+  - python3 -V
+  - python3 -m venv venv
+  - source venv/bin/activate
+  - pip install --upgrade pip
+
+lint-test:
+  stage: lint
+  image: python:3.10-slim
+  script:
+    - pip install flake8
+    - flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+    - flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+docker-build-check:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  before_script: []  # Override global python before_script
+  script:
+    - docker build -t studentstudybuddy:latest .
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "master"
