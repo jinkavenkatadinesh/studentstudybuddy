@@ -42,7 +42,7 @@ class RAGPipeline:
         context_parts = []
         sources = []
         for i, (content, score, meta) in enumerate(results):
-            context_parts.append(f"[Source {i+1}] {content}")
+            context_parts.append(f"[Source {i + 1}] {content}")
             sources.append(
                 {
                     "content": content[:200] + "..." if len(content) > 200 else content,
@@ -83,7 +83,7 @@ class RAGPipeline:
         context_parts = []
         sources = []
         for i, (content, score, meta) in enumerate(results):
-            context_parts.append(f"[Source {i+1}] {content}")
+            context_parts.append(f"[Source {i + 1}] {content}")
             sources.append(
                 {
                     "content": content[:200] + "..." if len(content) > 200 else content,

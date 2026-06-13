@@ -68,10 +68,10 @@ def render_quiz_results(result: QuizResult):
         st.markdown(
             f"""
         <div class="{css_class}">
-            <strong>{icon} Q{i+1}: {pq['question']}</strong><br>
-            <span style="color:#94A3B8;">Your answer:</span> {pq['user_answer'] or '(unanswered)'}<br>
-            <span style="color:#94A3B8;">Correct answer:</span> <strong style="color:#10B981;">{pq['correct_answer']}</strong>
-            {"<br><span style='color:#94A3B8;font-size:0.85rem;'>" + pq['explanation'] + "</span>" if pq.get('explanation') else ""}
+            <strong>{icon} Q{i + 1}: {pq["question"]}</strong><br>
+            <span style="color:#94A3B8;">Your answer:</span> {pq["user_answer"] or "(unanswered)"}<br>
+            <span style="color:#94A3B8;">Correct answer:</span> <strong style="color:#10B981;">{pq["correct_answer"]}</strong>
+            {"<br><span style='color:#94A3B8;font-size:0.85rem;'>" + pq["explanation"] + "</span>" if pq.get("explanation") else ""}
         </div>
         """,
             unsafe_allow_html=True,

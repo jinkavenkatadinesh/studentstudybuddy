@@ -65,12 +65,12 @@ class AIManager:
                     messages.append({"role": "system", "content": system})
                 messages.append({"role": "user", "content": prompt})
 
-                response = openai_client.chat.completions.create(
+                openai_response = openai_client.chat.completions.create(
                     model=model,
                     messages=messages,  # type: ignore
                     temperature=temperature,
                 )
-                return response.choices[0].message.content or ""
+                return openai_response.choices[0].message.content or ""
             except Exception as e:
                 logger.error("OpenAI generation failed: %s", e)
                 raise RuntimeError(f"OpenAI generation failed: {e}")
@@ -84,12 +84,12 @@ class AIManager:
                     temperature=temperature,
                     system_instruction=system if system else None,
                 )
-                response = gemini_client.models.generate_content(
+                gemini_response = gemini_client.models.generate_content(
                     model=model,
                     contents=prompt,
                     config=config,
                 )
-                return response.text or ""
+                return gemini_response.text or ""
             except Exception as e:
                 logger.error("Gemini generation failed: %s", e)
                 raise RuntimeError(f"Gemini generation failed: {e}")
@@ -151,9 +151,9 @@ class AIManager:
                     contents=prompt,
                     config=config,
                 )
-                for chunk in response_stream:
-                    if chunk.text:
-                        yield chunk.text
+                for gemini_chunk in response_stream:
+                    if gemini_chunk.text:
+                        yield gemini_chunk.text
             except Exception as e:
                 logger.error("Gemini streaming failed: %s", e)
                 yield f"\n\n⚠️ Error: {e}"

@@ -65,10 +65,10 @@ def render_analytics():
                 st.markdown(
                     f"""
                 <div class="doc-card">
-                    <div class="doc-name">{h['topic']}</div>
+                    <div class="doc-name">{h["topic"]}</div>
                     <div class="doc-meta">
-                        <span style="color:{score_color};font-weight:700;">{h['percentage']:.0f}%</span>
-                        · {h['score']}/{h['total']} · {h['difficulty']} · {h.get('type', 'mcq').upper()}
+                        <span style="color:{score_color};font-weight:700;">{h["percentage"]:.0f}%</span>
+                        · {h["score"]}/{h["total"]} · {h["difficulty"]} · {h.get("type", "mcq").upper()}
                     </div>
                 </div>
                 """,

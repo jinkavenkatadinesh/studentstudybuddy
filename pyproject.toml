@@ -22,7 +22,8 @@ ignore = [
     "B904",  # Within an except clause raise exceptions with raise ... from
     "B007",  # Loop control variable not used
     "N811",  # Constant imported as non-constant
-    "C401"   # Unnecessary generator
+    "C401",  # Unnecessary generator
+    "B905"   # zip() without explicit strict parameter
 ]
 
 [tool.ruff.format]

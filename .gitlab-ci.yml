@@ -36,6 +36,15 @@ ruff-lint:
   script:
     - ruff check .
 
+gitleaks-scan:
+  stage: lint
+  image:
+    name: zricethezav/gitleaks:latest
+    entrypoint: [""]
+  before_script: []
+  script:
+    - gitleaks detect --verbose --source=$CI_PROJECT_DIR --no-git=true
+
 # ── Format Stage ──────────────────────────────────────────────────────────────
 ruff-format:
   stage: format
@@ -56,6 +65,13 @@ pytest-testing:
   image: python:3.10-slim
   script:
     - pytest
+
+dependency-audit:
+  stage: test
+  image: python:3.10-slim
+  script:
+    - pip install pip-audit
+    - pip-audit -r requirements.txt
 
 # ── Coverage Stage ────────────────────────────────────────────────────────────
 pytest-coverage:

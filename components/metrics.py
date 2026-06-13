@@ -41,7 +41,7 @@ def render_quiz_history_chart(history: list[dict]):
         return
 
     scores = [h["percentage"] for h in history]
-    labels = [f"Quiz {i+1}" for i in range(len(history))]
+    labels = [f"Quiz {i + 1}" for i in range(len(history))]
     difficulties = [h.get("difficulty", "medium") for h in history]
 
     fig = go.Figure()
