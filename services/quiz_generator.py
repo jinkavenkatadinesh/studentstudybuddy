@@ -7,7 +7,7 @@ import re
 from models.schemas import Question, Quiz, QuizResult
 from rag.pipeline import RAGPipeline
 from rag.prompts import QUIZ_MCQ_PROMPT, QUIZ_TRUE_FALSE_PROMPT
-from services.ollama_manager import OllamaManager
+from services.ai_manager import AIManager
 from config import DEFAULT_MODEL, DEFAULT_TEMPERATURE
 from utils.logger import setup_logger
 
@@ -17,9 +17,9 @@ logger = setup_logger(__name__)
 class QuizGenerator:
     """Generates quizzes from document content using AI."""
 
-    def __init__(self, rag_pipeline: RAGPipeline, ollama_manager: OllamaManager):
+    def __init__(self, rag_pipeline: RAGPipeline, ai_manager: AIManager):
         self.rag = rag_pipeline
-        self.ollama = ollama_manager
+        self.ai = ai_manager
 
     def generate_mcq(
         self,
@@ -37,7 +37,7 @@ class QuizGenerator:
         prompt = QUIZ_MCQ_PROMPT.format(
             num_questions=num_questions, difficulty=difficulty, context=context
         )
-        raw = self.ollama.generate(prompt, model=model, temperature=temperature)
+        raw = self.ai.generate(prompt, model=model, temperature=temperature)
         questions = self._parse_questions(raw, "mcq")
 
         return Quiz(
@@ -64,7 +64,7 @@ class QuizGenerator:
         prompt = QUIZ_TRUE_FALSE_PROMPT.format(
             num_questions=num_questions, difficulty=difficulty, context=context
         )
-        raw = self.ollama.generate(prompt, model=model, temperature=temperature)
+        raw = self.ai.generate(prompt, model=model, temperature=temperature)
         questions = self._parse_questions(raw, "true_false")
 
         return Quiz(
@@ -95,7 +95,7 @@ class QuizGenerator:
             difficulty=difficulty,
             context=f"Topic: {topic}\n\nGenerate questions about this topic using your knowledge.",
         )
-        raw = self.ollama.generate(prompt, model=model, temperature=temperature)
+        raw = self.ai.generate(prompt, model=model, temperature=temperature)
         questions = self._parse_questions(raw, question_type)
 
         return Quiz(

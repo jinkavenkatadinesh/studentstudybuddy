@@ -9,7 +9,7 @@ import io
 from models.schemas import Flashcard, FlashcardSet
 from rag.pipeline import RAGPipeline
 from rag.prompts import FLASHCARD_PROMPT
-from services.ollama_manager import OllamaManager
+from services.ai_manager import AIManager
 from config import DEFAULT_MODEL, DEFAULT_TEMPERATURE
 from utils.logger import setup_logger
 
@@ -19,9 +19,9 @@ logger = setup_logger(__name__)
 class FlashcardGenerator:
     """Generates study flashcards from document content."""
 
-    def __init__(self, rag_pipeline: RAGPipeline, ollama_manager: OllamaManager):
+    def __init__(self, rag_pipeline: RAGPipeline, ai_manager: AIManager):
         self.rag = rag_pipeline
-        self.ollama = ollama_manager
+        self.ai = ai_manager
 
     def generate(
         self,
@@ -39,7 +39,7 @@ class FlashcardGenerator:
         prompt = FLASHCARD_PROMPT.format(
             num_cards=num_cards, difficulty=difficulty, context=context
         )
-        raw = self.ollama.generate(prompt, model=model, temperature=temperature)
+        raw = self.ai.generate(prompt, model=model, temperature=temperature)
         cards = self._parse_flashcards(raw, difficulty)
 
         return FlashcardSet(
@@ -60,7 +60,7 @@ class FlashcardGenerator:
         prompt = FLASHCARD_PROMPT.format(
             num_cards=num_cards, difficulty=difficulty, context=text[:5000]
         )
-        raw = self.ollama.generate(prompt, model=model, temperature=temperature)
+        raw = self.ai.generate(prompt, model=model, temperature=temperature)
         cards = self._parse_flashcards(raw, difficulty)
         return FlashcardSet(cards=cards[:num_cards], topic="Custom flashcards")
 

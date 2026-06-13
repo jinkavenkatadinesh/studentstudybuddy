@@ -83,22 +83,30 @@ def _init_services():
 
     if st.session_state.ollama_available:
         st.session_state.ollama_models = ollama_mgr.list_models()
+    else:
+        st.session_state.ollama_models = []
 
-        # RAG Pipeline
-        from rag.pipeline import RAGPipeline
-        rag = RAGPipeline(vector_store, ollama_mgr)
-        st.session_state.rag_pipeline = rag
+    # Unified AI Manager
+    from services.ai_manager import AIManager
+    ai_mgr = AIManager(ollama_mgr)
+    st.session_state.ai_manager = ai_mgr
 
-        # Generators
-        from services.quiz_generator import QuizGenerator
-        from services.flashcard_generator import FlashcardGenerator
-        from services.summary_generator import SummaryGenerator
+    # RAG Pipeline
+    from rag.pipeline import RAGPipeline
+    rag = RAGPipeline(vector_store, ai_mgr)
+    st.session_state.rag_pipeline = rag
 
-        st.session_state.quiz_generator = QuizGenerator(rag, ollama_mgr)
-        st.session_state.flashcard_generator = FlashcardGenerator(rag, ollama_mgr)
-        st.session_state.summary_generator = SummaryGenerator(rag, ollama_mgr)
+    # Generators
+    from services.quiz_generator import QuizGenerator
+    from services.flashcard_generator import FlashcardGenerator
+    from services.summary_generator import SummaryGenerator
+
+    st.session_state.quiz_generator = QuizGenerator(rag, ai_mgr)
+    st.session_state.flashcard_generator = FlashcardGenerator(rag, ai_mgr)
+    st.session_state.summary_generator = SummaryGenerator(rag, ai_mgr)
 
     st.session_state._services_initialized = True
+
 
 
 # Initialize all services
@@ -108,6 +116,15 @@ _init_services()
 if "current_page" not in st.session_state:
     st.session_state.current_page = "home"
 
+if "ai_provider" not in st.session_state:
+    st.session_state.ai_provider = "ollama"
+
+if "openai_api_key" not in st.session_state:
+    st.session_state.openai_api_key = ""
+
+if "gemini_api_key" not in st.session_state:
+    st.session_state.gemini_api_key = ""
+
 if "selected_model" not in st.session_state:
     from config import DEFAULT_MODEL
     available = st.session_state.get("ollama_models", [])
@@ -115,6 +132,7 @@ if "selected_model" not in st.session_state:
         st.session_state.selected_model = available[0]
     else:
         st.session_state.selected_model = DEFAULT_MODEL
+
 
 if "temperature" not in st.session_state:
     from config import DEFAULT_TEMPERATURE

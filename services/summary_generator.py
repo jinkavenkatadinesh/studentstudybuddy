@@ -8,7 +8,7 @@ from rag.prompts import (
     SUMMARY_SHORT_PROMPT, SUMMARY_DETAILED_PROMPT,
     SUMMARY_BULLET_PROMPT, SUMMARY_CHAPTER_PROMPT,
 )
-from services.ollama_manager import OllamaManager
+from services.ai_manager import AIManager
 from config import DEFAULT_MODEL, DEFAULT_TEMPERATURE
 from utils.logger import setup_logger
 
@@ -25,9 +25,9 @@ _PROMPT_MAP = {
 class SummaryGenerator:
     """Generates various types of summaries from document content."""
 
-    def __init__(self, rag_pipeline: RAGPipeline, ollama_manager: OllamaManager):
+    def __init__(self, rag_pipeline: RAGPipeline, ai_manager: AIManager):
         self.rag = rag_pipeline
-        self.ollama = ollama_manager
+        self.ai = ai_manager
 
     def generate(
         self,
@@ -44,10 +44,11 @@ class SummaryGenerator:
         prompt_template = _PROMPT_MAP.get(summary_type, SUMMARY_SHORT_PROMPT)
         prompt = prompt_template.format(text=context)
 
-        content = self.ollama.generate(
+        content = self.ai.generate(
             prompt=prompt, model=model, temperature=temperature,
             system="You are an expert academic summarizer. Create clear, well-organized summaries.",
         )
+
 
         logger.info("Generated %s summary for document %s", summary_type, doc_id)
         return Summary(content=content, summary_type=summary_type, doc_id=doc_id)

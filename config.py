@@ -22,7 +22,7 @@ DOCUMENTS_META_FILE = DATA_DIR / "documents.json"
 for _dir in [DATA_DIR, UPLOAD_DIR, VECTOR_DIR, LOG_DIR]:
     _dir.mkdir(parents=True, exist_ok=True)
 
-# ── Ollama Configuration ─────────────────────────────────────────────────────
+# ── AI Providers Configuration ────────────────────────────────────────────────
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 DEFAULT_MODEL = "qwen3:8b"
 AVAILABLE_MODELS = [
@@ -31,6 +31,20 @@ AVAILABLE_MODELS = [
     "mistral",
     "llama3",
 ]
+
+# Cloud LLM Models
+OPENAI_MODELS = [
+    "gpt-4o-mini",
+    "gpt-4o",
+    "gpt-3.5-turbo",
+]
+
+GEMINI_MODELS = [
+    "gemini-2.0-flash",
+    "gemini-1.5-flash",
+    "gemini-1.5-pro",
+]
+
 DEFAULT_TEMPERATURE = 0.7
 MIN_TEMPERATURE = 0.0
 MAX_TEMPERATURE = 1.5

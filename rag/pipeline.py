@@ -4,7 +4,7 @@ from __future__ import annotations
 from typing import Generator
 
 from rag.prompts import QA_PROMPT, QA_SYSTEM_PROMPT, CHAT_SYSTEM_PROMPT
-from services.ollama_manager import OllamaManager
+from services.ai_manager import AIManager
 from vectorstore.faiss_store import FAISSVectorStore
 from config import MAX_CONTEXT_CHUNKS, DEFAULT_MODEL, DEFAULT_TEMPERATURE
 from utils.logger import setup_logger
@@ -15,17 +15,17 @@ logger = setup_logger(__name__)
 class RAGPipeline:
     """Retrieval-Augmented Generation pipeline.
 
-    Combines FAISS similarity search with Ollama LLM generation
+    Combines FAISS similarity search with LLM generation
     to answer questions grounded in uploaded documents.
     """
 
     def __init__(
         self,
         vector_store: FAISSVectorStore,
-        ollama_manager: OllamaManager,
+        ai_manager: AIManager,
     ):
         self.vector_store = vector_store
-        self.ollama_manager = ollama_manager
+        self.ai_manager = ai_manager
 
     def ask(
         self,
@@ -34,24 +34,12 @@ class RAGPipeline:
         temperature: float = DEFAULT_TEMPERATURE,
         k: int = MAX_CONTEXT_CHUNKS,
     ) -> tuple[str, list[dict]]:
-        """Ask a question using RAG (retrieve → generate).
-
-        Args:
-            question: User question.
-            model: Ollama model name.
-            temperature: Generation temperature.
-            k: Number of context chunks to retrieve.
-
-        Returns:
-            Tuple of (answer_text, source_citations).
-        """
-        # Retrieve relevant chunks
+        """Ask a question using RAG (retrieve → generate)."""
         results = self.vector_store.similarity_search(question, k=k)
 
         if not results:
             return "I don't have any documents to search. Please upload study materials first.", []
 
-        # Build context and sources
         context_parts = []
         sources = []
         for i, (content, score, meta) in enumerate(results):
@@ -67,7 +55,7 @@ class RAGPipeline:
         prompt = QA_PROMPT.format(context=context, question=question)
 
         # Generate answer
-        answer = self.ollama_manager.generate(
+        answer = self.ai_manager.generate(
             prompt=prompt,
             model=model,
             temperature=temperature,
@@ -83,11 +71,8 @@ class RAGPipeline:
         model: str = DEFAULT_MODEL,
         temperature: float = DEFAULT_TEMPERATURE,
         k: int = MAX_CONTEXT_CHUNKS,
-    ) -> Generator[str | list[dict], None, None]:
-        """Stream an answer using RAG. Yields text chunks, then sources at the end.
-
-        The last yielded item is a list of source dicts.
-        """
+    ):
+        """Stream an answer using RAG. Yields text chunks, then sources at the end."""
         results = self.vector_store.similarity_search(question, k=k)
 
         if not results:
@@ -108,7 +93,7 @@ class RAGPipeline:
         context = "\n\n".join(context_parts)
         prompt = QA_PROMPT.format(context=context, question=question)
 
-        for chunk in self.ollama_manager.stream_generate(
+        for chunk in self.ai_manager.stream_generate(
             prompt=prompt,
             model=model,
             temperature=temperature,
@@ -129,12 +114,13 @@ class RAGPipeline:
     ) -> str:
         """Generate using a custom prompt with provided context."""
         full_prompt = prompt.format(context=context) if "{context}" in prompt else prompt
-        return self.ollama_manager.generate(
+        return self.ai_manager.generate(
             prompt=full_prompt,
             model=model,
             temperature=temperature,
             system=system,
         )
+
 
     def get_document_context(self, doc_id: str, max_chars: int = 8000) -> str:
         """Get the full text content of a document from the vector store."""
