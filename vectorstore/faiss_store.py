@@ -9,7 +9,7 @@ import faiss
 import numpy as np
 from langchain_community.vectorstores import FAISS as LangchainFAISS
 
-from config import VECTOR_DIR, MAX_CONTEXT_CHUNKS
+from config import MAX_CONTEXT_CHUNKS, VECTOR_DIR
 from embeddings.manager import EmbeddingManager
 from models.schemas import TextChunk
 from utils.logger import setup_logger
@@ -35,7 +35,7 @@ class FAISSVectorStore:
             try:
                 self._index = faiss.read_index(str(FAISS_INDEX_FILE))
                 with open(METADATA_FILE, "rb") as f:
-                    self._metadata = pickle.load(f)
+                    self._metadata = pickle.load(f)  # nosec B301
                 logger.info("Loaded FAISS index with %d vectors", self._index.ntotal)
                 self._rebuild_langchain_store()
             except Exception as e:
@@ -57,7 +57,10 @@ class FAISSVectorStore:
         try:
             embeddings = self.embedding_manager.get_langchain_embeddings()
             texts = [m["content"] for m in self._metadata]
-            metadatas = [{"doc_id": m["doc_id"], "chunk_index": m["chunk_index"], "source": m.get("source", "")} for m in self._metadata]
+            metadatas = [
+                {"doc_id": m["doc_id"], "chunk_index": m["chunk_index"], "source": m.get("source", "")}
+                for m in self._metadata
+            ]
             self._langchain_store = LangchainFAISS.from_texts(texts, embeddings, metadatas=metadatas)
         except Exception as e:
             logger.error("Failed to rebuild LangChain store: %s", e)
@@ -68,9 +71,12 @@ class FAISSVectorStore:
             return 0
         texts = [chunk.content for chunk in chunks]
         embeddings = self.embedding_manager.embed_batch(texts)
+        assert self._index is not None
         self._index.add(np.array(embeddings, dtype=np.float32))
         for chunk in chunks:
-            self._metadata.append({"doc_id": doc_id, "chunk_index": chunk.chunk_index, "content": chunk.content, "source": source})
+            self._metadata.append(
+                {"doc_id": doc_id, "chunk_index": chunk.chunk_index, "content": chunk.content, "source": source}
+            )
         self._rebuild_langchain_store()
         self.save()
         logger.info("Added %d chunks for document %s", len(chunks), doc_id)
@@ -83,6 +89,7 @@ class FAISSVectorStore:
         if not keep:
             self._init_empty()
         else:
+            assert self._index is not None
             vecs = faiss.rev_swig_ptr(self._index.get_xb(), self._index.ntotal * self._index.d)
             vecs = vecs.reshape(self._index.ntotal, self._index.d).copy()
             keep_vecs = vecs[keep]

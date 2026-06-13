@@ -1,13 +1,15 @@
 """Flashcard UI component — flip-card display with navigation."""
 
 import streamlit as st
+
 from models.schemas import Flashcard, FlashcardSet
 
 
 def render_flashcard(card: Flashcard, index: int, is_flipped: bool = False):
     """Render a single flashcard with flip animation."""
     flipped_class = "flipped" if is_flipped else ""
-    st.markdown(f"""
+    st.markdown(
+        f"""
     <div class="flashcard-container">
         <div class="flashcard {flipped_class}">
             <div class="flashcard-front">
@@ -28,7 +30,9 @@ def render_flashcard(card: Flashcard, index: int, is_flipped: bool = False):
             </div>
         </div>
     </div>
-    """, unsafe_allow_html=True)
+    """,
+        unsafe_allow_html=True,
+    )
 
 
 def render_flashcard_navigation(total: int, current: int):
@@ -40,7 +44,10 @@ def render_flashcard_navigation(total: int, current: int):
             st.session_state.fc_flipped = False
             st.rerun()
     with col2:
-        st.markdown(f'<div style="text-align:center;color:#94A3B8;padding:0.5rem;font-weight:600;">Card {current + 1} of {total}</div>', unsafe_allow_html=True)
+        st.markdown(
+            f'<div style="text-align:center;color:#94A3B8;padding:0.5rem;font-weight:600;">Card {current + 1} of {total}</div>',
+            unsafe_allow_html=True,
+        )
         st.progress((current + 1) / total if total > 0 else 0)
     with col3:
         if st.button("Next →", key="fc_next", disabled=current >= total - 1, use_container_width=True):

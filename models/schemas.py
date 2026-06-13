@@ -5,12 +5,13 @@ from __future__ import annotations
 import time
 from dataclasses import dataclass, field
 
-
 # ── Document Models ───────────────────────────────────────────────────────────
+
 
 @dataclass
 class Document:
     """Represents an uploaded study document."""
+
     id: str
     filename: str
     filepath: str
@@ -44,6 +45,7 @@ class Document:
 @dataclass
 class TextChunk:
     """A chunk of text from a parsed document."""
+
     content: str
     doc_id: str
     chunk_index: int
@@ -52,9 +54,11 @@ class TextChunk:
 
 # ── Quiz Models ───────────────────────────────────────────────────────────────
 
+
 @dataclass
 class Question:
     """A single quiz question (MCQ or True/False)."""
+
     question: str
     options: list[str]
     correct_answer: str
@@ -69,6 +73,7 @@ class Question:
 @dataclass
 class Quiz:
     """A complete quiz with metadata and questions."""
+
     topic: str
     questions: list[Question]
     difficulty: str = "medium"
@@ -84,6 +89,7 @@ class Quiz:
 @dataclass
 class QuizResult:
     """Results from a completed quiz attempt."""
+
     quiz: Quiz
     user_answers: list[str]
     score: int = 0
@@ -103,14 +109,16 @@ class QuizResult:
             is_correct = question.is_correct(user_ans)
             if is_correct:
                 self.score += 1
-            self.per_question.append({
-                "question": question.question,
-                "options": question.options,
-                "user_answer": user_ans,
-                "correct_answer": question.correct_answer,
-                "is_correct": is_correct,
-                "explanation": question.explanation,
-            })
+            self.per_question.append(
+                {
+                    "question": question.question,
+                    "options": question.options,
+                    "user_answer": user_ans,
+                    "correct_answer": question.correct_answer,
+                    "is_correct": is_correct,
+                    "explanation": question.explanation,
+                }
+            )
         return self
 
     @property
@@ -131,9 +139,11 @@ class QuizResult:
 
 # ── Flashcard Models ──────────────────────────────────────────────────────────
 
+
 @dataclass
 class Flashcard:
     """A single flashcard with front (question) and back (answer)."""
+
     front: str
     back: str
     difficulty: str = "medium"
@@ -143,6 +153,7 @@ class Flashcard:
 @dataclass
 class FlashcardSet:
     """A set of flashcards generated from a document."""
+
     cards: list[Flashcard]
     topic: str = ""
     doc_id: str = ""
@@ -151,9 +162,11 @@ class FlashcardSet:
 
 # ── Summary Models ────────────────────────────────────────────────────────────
 
+
 @dataclass
 class Summary:
     """An AI-generated summary of a document."""
+
     content: str
     summary_type: str  # short, detailed, bullet, chapter
     doc_id: str = ""
@@ -162,9 +175,11 @@ class Summary:
 
 # ── Chat Models ───────────────────────────────────────────────────────────────
 
+
 @dataclass
 class ChatMessage:
     """A single message in a chat conversation."""
+
     role: str  # "user" or "assistant"
     content: str
     sources: list[dict] = field(default_factory=list)
@@ -173,9 +188,11 @@ class ChatMessage:
 
 # ── Analytics Models ──────────────────────────────────────────────────────────
 
+
 @dataclass
 class AnalyticsData:
     """Aggregated analytics data."""
+
     documents_uploaded: int = 0
     quizzes_completed: int = 0
     avg_score: float = 0.0

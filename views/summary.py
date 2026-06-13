@@ -1,6 +1,7 @@
 """AI Summary page."""
 
 import streamlit as st
+
 from config import SUMMARY_TYPES
 
 
@@ -33,8 +34,15 @@ def render_summary():
     # Summary type
     col1, col2 = st.columns(2)
     with col1:
-        type_labels = {"short": "📋 Short Summary", "detailed": "📖 Detailed Summary", "bullet": "📌 Bullet Points", "chapter": "📑 Chapter-wise"}
-        summary_type = st.selectbox("Summary Type", SUMMARY_TYPES, format_func=lambda x: type_labels.get(x, x), key="summary_type")
+        type_labels = {
+            "short": "📋 Short Summary",
+            "detailed": "📖 Detailed Summary",
+            "bullet": "📌 Bullet Points",
+            "chapter": "📑 Chapter-wise",
+        }
+        summary_type = st.selectbox(
+            "Summary Type", SUMMARY_TYPES, format_func=lambda x: type_labels.get(x, x), key="summary_type"
+        )
     with col2:
         model = st.session_state.get("selected_model", "qwen3:8b")
         temp = st.session_state.get("temperature", 0.7)

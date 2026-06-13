@@ -1,19 +1,23 @@
 """Metrics and charts UI components."""
 
-import streamlit as st
 import plotly.graph_objects as go
+import streamlit as st
+
 from models.schemas import AnalyticsData
 
 
 def render_metric_card(icon: str, label: str, value, color: str = "#7C3AED"):
     """Render a styled metric card."""
-    st.markdown(f"""
+    st.markdown(
+        f"""
     <div class="metric-card">
         <div class="metric-icon">{icon}</div>
         <div class="metric-value">{value}</div>
         <div class="metric-label">{label}</div>
     </div>
-    """, unsafe_allow_html=True)
+    """,
+        unsafe_allow_html=True,
+    )
 
 
 def render_stat_row(stats: AnalyticsData):
@@ -41,23 +45,27 @@ def render_quiz_history_chart(history: list[dict]):
     difficulties = [h.get("difficulty", "medium") for h in history]
 
     fig = go.Figure()
-    fig.add_trace(go.Scatter(
-        x=labels, y=scores,
-        mode='lines+markers',
-        line=dict(color='#7C3AED', width=3),
-        marker=dict(size=10, color='#EC4899', line=dict(width=2, color='#7C3AED')),
-        text=[f"{s:.0f}% ({d})" for s, d in zip(scores, difficulties)],
-        hoverinfo='text+x',
-        fill='tozeroy',
-        fillcolor='rgba(124,58,237,0.1)',
-    ))
+    fig.add_trace(
+        go.Scatter(
+            x=labels,
+            y=scores,
+            mode="lines+markers",
+            line=dict(color="#7C3AED", width=3),
+            marker=dict(size=10, color="#EC4899", line=dict(width=2, color="#7C3AED")),
+            text=[f"{s:.0f}% ({d})" for s, d in zip(scores, difficulties)],
+            hoverinfo="text+x",
+            fill="tozeroy",
+            fillcolor="rgba(124,58,237,0.1)",
+        )
+    )
     fig.update_layout(
         title=None,
-        xaxis_title="", yaxis_title="Score %",
+        xaxis_title="",
+        yaxis_title="Score %",
         yaxis=dict(range=[0, 105]),
         template="plotly_dark",
-        plot_bgcolor='rgba(0,0,0,0)',
-        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor="rgba(0,0,0,0)",
+        paper_bgcolor="rgba(0,0,0,0)",
         height=350,
         margin=dict(l=40, r=20, t=20, b=40),
         font=dict(family="Inter", color="#94A3B8"),
@@ -76,18 +84,22 @@ def render_difficulty_chart(history: list[dict]):
         diff_counts[d] = diff_counts.get(d, 0) + 1
 
     colors = {"easy": "#10B981", "medium": "#F59E0B", "hard": "#EF4444"}
-    fig = go.Figure(data=[go.Pie(
-        labels=list(diff_counts.keys()),
-        values=list(diff_counts.values()),
-        marker=dict(colors=[colors.get(d, "#7C3AED") for d in diff_counts.keys()]),
-        hole=0.5,
-        textinfo='label+percent',
-        textfont=dict(size=13),
-    )])
+    fig = go.Figure(
+        data=[
+            go.Pie(
+                labels=list(diff_counts.keys()),
+                values=list(diff_counts.values()),
+                marker=dict(colors=[colors.get(d, "#7C3AED") for d in diff_counts.keys()]),
+                hole=0.5,
+                textinfo="label+percent",
+                textfont=dict(size=13),
+            )
+        ]
+    )
     fig.update_layout(
         template="plotly_dark",
-        plot_bgcolor='rgba(0,0,0,0)',
-        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor="rgba(0,0,0,0)",
+        paper_bgcolor="rgba(0,0,0,0)",
         height=300,
         margin=dict(l=20, r=20, t=20, b=20),
         font=dict(family="Inter", color="#94A3B8"),

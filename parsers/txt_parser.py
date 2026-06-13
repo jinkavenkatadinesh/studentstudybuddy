@@ -40,7 +40,9 @@ class TxtParser:
                 if text.strip():
                     logger.info(
                         "Read %d characters from %s (encoding: %s)",
-                        len(text), path.name, encoding,
+                        len(text),
+                        path.name,
+                        encoding,
                     )
                     return text
             except (UnicodeDecodeError, UnicodeError):

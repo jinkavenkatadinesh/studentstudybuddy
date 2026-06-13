@@ -1,16 +1,17 @@
 """Flashcard generator — creates study flashcards from documents."""
 
 from __future__ import annotations
-import json
-import re
+
 import csv
 import io
+import json
+import re
 
+from config import DEFAULT_MODEL, DEFAULT_TEMPERATURE
 from models.schemas import Flashcard, FlashcardSet
 from rag.pipeline import RAGPipeline
 from rag.prompts import FLASHCARD_PROMPT
 from services.ai_manager import AIManager
-from config import DEFAULT_MODEL, DEFAULT_TEMPERATURE
 from utils.logger import setup_logger
 
 logger = setup_logger(__name__)
@@ -36,15 +37,13 @@ class FlashcardGenerator:
         if not context:
             raise ValueError("No content found for this document.")
 
-        prompt = FLASHCARD_PROMPT.format(
-            num_cards=num_cards, difficulty=difficulty, context=context
-        )
+        prompt = FLASHCARD_PROMPT.format(num_cards=num_cards, difficulty=difficulty, context=context)
         raw = self.ai.generate(prompt, model=model, temperature=temperature)
         cards = self._parse_flashcards(raw, difficulty)
 
         return FlashcardSet(
             cards=cards[:num_cards],
-            topic=f"Flashcards from document",
+            topic="Flashcards from document",
             doc_id=doc_id,
         )
 
@@ -57,9 +56,7 @@ class FlashcardGenerator:
         temperature: float = DEFAULT_TEMPERATURE,
     ) -> FlashcardSet:
         """Generate flashcards from raw text."""
-        prompt = FLASHCARD_PROMPT.format(
-            num_cards=num_cards, difficulty=difficulty, context=text[:5000]
-        )
+        prompt = FLASHCARD_PROMPT.format(num_cards=num_cards, difficulty=difficulty, context=text[:5000])
         raw = self.ai.generate(prompt, model=model, temperature=temperature)
         cards = self._parse_flashcards(raw, difficulty)
         return FlashcardSet(cards=cards[:num_cards], topic="Custom flashcards")
@@ -106,10 +103,13 @@ class FlashcardGenerator:
             front = item.get("front", "")
             back = item.get("back", "")
             if front and back:
-                cards.append(Flashcard(
-                    front=front, back=back,
-                    difficulty=item.get("difficulty", default_difficulty),
-                ))
+                cards.append(
+                    Flashcard(
+                        front=front,
+                        back=back,
+                        difficulty=item.get("difficulty", default_difficulty),
+                    )
+                )
         if not cards:
             raise ValueError("No valid flashcards found in AI response.")
         return cards

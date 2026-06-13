@@ -1,7 +1,8 @@
 """Sidebar component — navigation, model config, and status."""
 
 import streamlit as st
-from config import PAGES, AVAILABLE_MODELS, DEFAULT_MODEL, DEFAULT_TEMPERATURE, MIN_TEMPERATURE, MAX_TEMPERATURE
+
+from config import AVAILABLE_MODELS, DEFAULT_TEMPERATURE, MAX_TEMPERATURE, MIN_TEMPERATURE, PAGES
 
 
 def render_sidebar():
@@ -25,20 +26,13 @@ def render_sidebar():
         st.markdown('<div class="sidebar-section">🤖 AI Model</div>', unsafe_allow_html=True)
 
         # Provider Selector
-        provider_map = {
-            "Local (Ollama)": "ollama",
-            "OpenAI": "openai",
-            "Google Gemini": "gemini"
-        }
+        provider_map = {"Local (Ollama)": "ollama", "OpenAI": "openai", "Google Gemini": "gemini"}
         current_provider = st.session_state.get("ai_provider", "ollama")
         provider_list = list(provider_map.keys())
         default_provider_idx = list(provider_map.values()).index(current_provider)
 
         selected_provider_label = st.selectbox(
-            "AI Provider",
-            provider_list,
-            index=default_provider_idx,
-            key="provider_select"
+            "AI Provider", provider_list, index=default_provider_idx, key="provider_select"
         )
         selected_provider = provider_map[selected_provider_label]
 
@@ -48,15 +42,18 @@ def render_sidebar():
             if selected_provider == "ollama":
                 available = st.session_state.get("ollama_models", [])
                 from config import DEFAULT_MODEL
+
                 if available and DEFAULT_MODEL not in available:
                     st.session_state.selected_model = available[0]
                 else:
                     st.session_state.selected_model = DEFAULT_MODEL
             elif selected_provider == "openai":
                 from config import OPENAI_MODELS
+
                 st.session_state.selected_model = OPENAI_MODELS[0]
             elif selected_provider == "gemini":
                 from config import GEMINI_MODELS
+
                 st.session_state.selected_model = GEMINI_MODELS[0]
             st.rerun()
 
@@ -79,7 +76,7 @@ def render_sidebar():
                 value=st.session_state.get("openai_api_key", ""),
                 type="password",
                 placeholder="sk-...",
-                help="Your OpenAI API Key will not be stored permanently."
+                help="Your OpenAI API Key will not be stored permanently.",
             )
             st.session_state.openai_api_key = openai_key
             if openai_key:
@@ -98,7 +95,7 @@ def render_sidebar():
                 value=st.session_state.get("gemini_api_key", ""),
                 type="password",
                 placeholder="AIzaSy...",
-                help="Your Gemini API Key will not be stored permanently."
+                help="Your Gemini API Key will not be stored permanently.",
             )
             st.session_state.gemini_api_key = gemini_key
             if gemini_key:
@@ -118,9 +115,11 @@ def render_sidebar():
             all_models = list(dict.fromkeys(available + AVAILABLE_MODELS))
         elif selected_provider == "openai":
             from config import OPENAI_MODELS
+
             all_models = OPENAI_MODELS
         elif selected_provider == "gemini":
             from config import GEMINI_MODELS
+
             all_models = GEMINI_MODELS
 
         current_model = st.session_state.get("selected_model")
@@ -149,7 +148,6 @@ def render_sidebar():
             help="Lower = more focused, Higher = more creative",
         )
 
-
         st.markdown('<hr class="sidebar-divider">', unsafe_allow_html=True)
 
         # ── Stats summary ─────────────────────────────────
@@ -169,7 +167,7 @@ def render_sidebar():
         # Footer
         st.markdown(
             '<div style="text-align:center;color:#64748B;font-size:0.75rem;padding-top:0.5rem;">'
-            'Student Study Buddy v1.0<br>Powered by Ollama & LangChain'
-            '</div>',
+            "Student Study Buddy v1.0<br>Powered by Ollama & LangChain"
+            "</div>",
             unsafe_allow_html=True,
         )

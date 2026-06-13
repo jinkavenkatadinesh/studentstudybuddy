@@ -1,10 +1,11 @@
 """Ollama manager — handles connection, model listing, and text generation."""
 
 from __future__ import annotations
+
 import ollama
 from langchain_ollama import ChatOllama
 
-from config import OLLAMA_BASE_URL, DEFAULT_MODEL, DEFAULT_TEMPERATURE
+from config import DEFAULT_MODEL, DEFAULT_TEMPERATURE, OLLAMA_BASE_URL
 from utils.logger import setup_logger
 
 logger = setup_logger(__name__)

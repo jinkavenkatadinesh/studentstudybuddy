@@ -1,9 +1,11 @@
 """Quiz Generator page."""
 
 import time
+
 import streamlit as st
+
 from components.quiz_ui import render_question, render_quiz_progress, render_quiz_results
-from config import DIFFICULTY_LEVELS, DEFAULT_NUM_QUESTIONS, MIN_NUM_QUESTIONS, MAX_NUM_QUESTIONS
+from config import DEFAULT_NUM_QUESTIONS, DIFFICULTY_LEVELS, MAX_NUM_QUESTIONS, MIN_NUM_QUESTIONS
 
 
 def render_quiz():
@@ -93,7 +95,9 @@ def _render_quiz_form():
 def _render_active_quiz():
     """Render the active quiz with all questions."""
     quiz = st.session_state.active_quiz
-    st.markdown(f"**Topic:** {quiz.topic} | **Difficulty:** {quiz.difficulty.upper()} | **Type:** {quiz.question_type.upper()}")
+    st.markdown(
+        f"**Topic:** {quiz.topic} | **Difficulty:** {quiz.difficulty.upper()} | **Type:** {quiz.question_type.upper()}"
+    )
 
     answers = {}
     answered_count = 0

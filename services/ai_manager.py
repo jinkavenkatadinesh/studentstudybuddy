@@ -1,14 +1,17 @@
 """Unified AI Manager — supports Ollama, OpenAI, and Google Gemini."""
 
 from __future__ import annotations
-import streamlit as st
+
+import os
 from typing import Generator
-from openai import OpenAI
+
+import streamlit as st
 from google import genai
 from google.genai import types
+from openai import OpenAI
 
+from config import DEFAULT_TEMPERATURE
 from services.ollama_manager import OllamaManager
-from config import OLLAMA_BASE_URL, DEFAULT_MODEL, DEFAULT_TEMPERATURE
 from utils.logger import setup_logger
 
 logger = setup_logger(__name__)
@@ -25,11 +28,17 @@ class AIManager:
         return st.session_state.get("ai_provider", "ollama")
 
     def _get_api_key(self, provider: str) -> str:
-        """Get the API key for the provider from session state."""
+        """Get the API key for the provider from session state or environment."""
         if provider == "openai":
-            return st.session_state.get("openai_api_key", "").strip()
+            key = st.session_state.get("openai_api_key", "").strip()
+            if not key:
+                key = os.getenv("OPENAI_API_KEY", "").strip()
+            return key
         elif provider == "gemini":
-            return st.session_state.get("gemini_api_key", "").strip()
+            key = st.session_state.get("gemini_api_key", "").strip()
+            if not key:
+                key = os.getenv("GEMINI_API_KEY", "").strip()
+            return key
         return ""
 
     def generate(
@@ -50,15 +59,15 @@ class AIManager:
             if not api_key:
                 raise ValueError("OpenAI API Key is required. Please set it in the sidebar.")
             try:
-                client = OpenAI(api_key=api_key)
+                openai_client = OpenAI(api_key=api_key)
                 messages = []
                 if system:
                     messages.append({"role": "system", "content": system})
                 messages.append({"role": "user", "content": prompt})
 
-                response = client.chat.completions.create(
+                response = openai_client.chat.completions.create(
                     model=model,
-                    messages=messages,
+                    messages=messages,  # type: ignore
                     temperature=temperature,
                 )
                 return response.choices[0].message.content or ""
@@ -70,12 +79,12 @@ class AIManager:
             if not api_key:
                 raise ValueError("Gemini API Key is required. Please set it in the sidebar.")
             try:
-                client = genai.Client(api_key=api_key)
+                gemini_client = genai.Client(api_key=api_key)
                 config = types.GenerateContentConfig(
                     temperature=temperature,
                     system_instruction=system if system else None,
                 )
-                response = client.models.generate_content(
+                response = gemini_client.models.generate_content(
                     model=model,
                     contents=prompt,
                     config=config,
@@ -107,15 +116,15 @@ class AIManager:
                 yield "⚠️ OpenAI API Key is required. Please set it in the sidebar."
                 return
             try:
-                client = OpenAI(api_key=api_key)
+                openai_client = OpenAI(api_key=api_key)
                 messages = []
                 if system:
                     messages.append({"role": "system", "content": system})
                 messages.append({"role": "user", "content": prompt})
 
-                stream = client.chat.completions.create(
+                stream = openai_client.chat.completions.create(
                     model=model,
-                    messages=messages,
+                    messages=messages,  # type: ignore
                     temperature=temperature,
                     stream=True,
                 )
@@ -132,12 +141,12 @@ class AIManager:
                 yield "⚠️ Gemini API Key is required. Please set it in the sidebar."
                 return
             try:
-                client = genai.Client(api_key=api_key)
+                gemini_client = genai.Client(api_key=api_key)
                 config = types.GenerateContentConfig(
                     temperature=temperature,
                     system_instruction=system if system else None,
                 )
-                response_stream = client.models.generate_content_stream(
+                response_stream = gemini_client.models.generate_content_stream(
                     model=model,
                     contents=prompt,
                     config=config,

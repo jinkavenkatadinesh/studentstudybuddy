@@ -2,14 +2,16 @@
 
 from __future__ import annotations
 
+from config import DEFAULT_MODEL, DEFAULT_TEMPERATURE
 from models.schemas import Summary
 from rag.pipeline import RAGPipeline
 from rag.prompts import (
-    SUMMARY_SHORT_PROMPT, SUMMARY_DETAILED_PROMPT,
-    SUMMARY_BULLET_PROMPT, SUMMARY_CHAPTER_PROMPT,
+    SUMMARY_BULLET_PROMPT,
+    SUMMARY_CHAPTER_PROMPT,
+    SUMMARY_DETAILED_PROMPT,
+    SUMMARY_SHORT_PROMPT,
 )
 from services.ai_manager import AIManager
-from config import DEFAULT_MODEL, DEFAULT_TEMPERATURE
 from utils.logger import setup_logger
 
 logger = setup_logger(__name__)
@@ -45,10 +47,11 @@ class SummaryGenerator:
         prompt = prompt_template.format(text=context)
 
         content = self.ai.generate(
-            prompt=prompt, model=model, temperature=temperature,
+            prompt=prompt,
+            model=model,
+            temperature=temperature,
             system="You are an expert academic summarizer. Create clear, well-organized summaries.",
         )
-
 
         logger.info("Generated %s summary for document %s", summary_type, doc_id)
         return Summary(content=content, summary_type=summary_type, doc_id=doc_id)

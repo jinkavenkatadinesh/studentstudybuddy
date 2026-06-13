@@ -1,7 +1,8 @@
 """Study Analytics page."""
 
 import streamlit as st
-from components.metrics import render_metric_card, render_quiz_history_chart, render_difficulty_chart
+
+from components.metrics import render_difficulty_chart, render_metric_card, render_quiz_history_chart
 
 
 def render_analytics():
@@ -61,7 +62,8 @@ def render_analytics():
             st.markdown("#### 📋 Recent Quizzes")
             for h in reversed(history[-5:]):
                 score_color = "#10B981" if h["percentage"] >= 60 else "#EF4444"
-                st.markdown(f"""
+                st.markdown(
+                    f"""
                 <div class="doc-card">
                     <div class="doc-name">{h['topic']}</div>
                     <div class="doc-meta">
@@ -69,12 +71,14 @@ def render_analytics():
                         · {h['score']}/{h['total']} · {h['difficulty']} · {h.get('type', 'mcq').upper()}
                     </div>
                 </div>
-                """, unsafe_allow_html=True)
+                """,
+                    unsafe_allow_html=True,
+                )
     else:
         st.markdown(
             '<div class="empty-state">'
             '<div class="empty-state-icon">📊</div>'
             '<div class="empty-state-text">Take quizzes to see your analytics!</div>'
-            '</div>',
+            "</div>",
             unsafe_allow_html=True,
         )

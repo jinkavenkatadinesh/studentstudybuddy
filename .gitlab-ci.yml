@@ -1,5 +1,9 @@
 stages:
   - lint
+  - format
+  - type_check
+  - test
+  - coverage
   - build
 
 variables:
@@ -15,8 +19,10 @@ before_script:
   - python3 -m venv venv
   - source venv/bin/activate
   - pip install --upgrade pip
+  - pip install -r requirements.txt
 
-lint-test:
+# ── Lint Stage ────────────────────────────────────────────────────────────────
+flake8-lint:
   stage: lint
   image: python:3.10-slim
   script:
@@ -24,12 +30,47 @@ lint-test:
     - flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
     - flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
+ruff-lint:
+  stage: lint
+  image: python:3.10-slim
+  script:
+    - ruff check .
+
+# ── Format Stage ──────────────────────────────────────────────────────────────
+ruff-format:
+  stage: format
+  image: python:3.10-slim
+  script:
+    - ruff format --check .
+
+# ── Type Check Stage ──────────────────────────────────────────────────────────
+mypy-typecheck:
+  stage: type_check
+  image: python:3.10-slim
+  script:
+    - mypy .
+
+# ── Test Stage ────────────────────────────────────────────────────────────────
+pytest-testing:
+  stage: test
+  image: python:3.10-slim
+  script:
+    - pytest
+
+# ── Coverage Stage ────────────────────────────────────────────────────────────
+pytest-coverage:
+  stage: coverage
+  image: python:3.10-slim
+  script:
+    - pytest --cov=services --cov=rag --cov-report=term-missing --cov-fail-under=20
+
+# ── Build Stage ───────────────────────────────────────────────────────────────
 docker-build-check:
   stage: build
   image: docker:latest
   services:
     - docker:dind
-  before_script: []  # Override global python before_script
+  before_script: []  # Override global before_script to avoid python install
   script:
     - docker build -t studentstudybuddy:latest .
   rules:

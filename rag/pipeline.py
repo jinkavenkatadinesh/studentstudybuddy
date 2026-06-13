@@ -1,13 +1,12 @@
 """RAG pipeline — retrieval-augmented generation for document Q&A."""
 
 from __future__ import annotations
-from typing import Generator
 
-from rag.prompts import QA_PROMPT, QA_SYSTEM_PROMPT, CHAT_SYSTEM_PROMPT
+from config import DEFAULT_MODEL, DEFAULT_TEMPERATURE, MAX_CONTEXT_CHUNKS
+from rag.prompts import CHAT_SYSTEM_PROMPT, QA_PROMPT, QA_SYSTEM_PROMPT
 from services.ai_manager import AIManager
-from vectorstore.faiss_store import FAISSVectorStore
-from config import MAX_CONTEXT_CHUNKS, DEFAULT_MODEL, DEFAULT_TEMPERATURE
 from utils.logger import setup_logger
+from vectorstore.faiss_store import FAISSVectorStore
 
 logger = setup_logger(__name__)
 
@@ -44,12 +43,14 @@ class RAGPipeline:
         sources = []
         for i, (content, score, meta) in enumerate(results):
             context_parts.append(f"[Source {i+1}] {content}")
-            sources.append({
-                "content": content[:200] + "..." if len(content) > 200 else content,
-                "source": meta.get("source", "Unknown"),
-                "doc_id": meta.get("doc_id", ""),
-                "score": round(score, 3),
-            })
+            sources.append(
+                {
+                    "content": content[:200] + "..." if len(content) > 200 else content,
+                    "source": meta.get("source", "Unknown"),
+                    "doc_id": meta.get("doc_id", ""),
+                    "score": round(score, 3),
+                }
+            )
 
         context = "\n\n".join(context_parts)
         prompt = QA_PROMPT.format(context=context, question=question)
@@ -83,12 +84,14 @@ class RAGPipeline:
         sources = []
         for i, (content, score, meta) in enumerate(results):
             context_parts.append(f"[Source {i+1}] {content}")
-            sources.append({
-                "content": content[:200] + "..." if len(content) > 200 else content,
-                "source": meta.get("source", "Unknown"),
-                "doc_id": meta.get("doc_id", ""),
-                "score": round(score, 3),
-            })
+            sources.append(
+                {
+                    "content": content[:200] + "..." if len(content) > 200 else content,
+                    "source": meta.get("source", "Unknown"),
+                    "doc_id": meta.get("doc_id", ""),
+                    "score": round(score, 3),
+                }
+            )
 
         context = "\n\n".join(context_parts)
         prompt = QA_PROMPT.format(context=context, question=question)
@@ -120,7 +123,6 @@ class RAGPipeline:
             temperature=temperature,
             system=system,
         )
-
 
     def get_document_context(self, doc_id: str, max_chars: int = 8000) -> str:
         """Get the full text content of a document from the vector store."""

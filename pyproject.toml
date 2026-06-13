@@ -1,0 +1,54 @@
+[tool.ruff]
+# Allow lines to be up to 120 chars
+line-length = 120
+
+exclude = [
+    ".git",
+    ".venv",
+    "venv",
+    "__pycache__",
+    "build",
+    "dist"
+]
+
+[tool.ruff.lint]
+# Enable linting rules
+select = ["E", "F", "I", "N", "W", "B", "C"]
+ignore = [
+    "E402",  # Module level import not at top of file (used in streamlit apps)
+    "E501",  # Line too long
+    "C901",  # Function is too complex
+    "C408",  # Unnecessary dict call
+    "B904",  # Within an except clause raise exceptions with raise ... from
+    "B007",  # Loop control variable not used
+    "N811",  # Constant imported as non-constant
+    "C401"   # Unnecessary generator
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.mypy]
+python_version = "3.10"
+warn_unused_configs = true
+disallow_untyped_defs = false
+ignore_missing_imports = true
+disable_error_code = [
+    "var-annotated",
+    "no-any-return",
+    "union-attr",
+    "annotation-unchecked"
+]
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-ra -q --cov=services --cov=rag --cov-report=term-missing"
+testpaths = [
+    "tests"
+]
+
+[tool.vulture]
+exclude = [".venv", "venv", ".git"]
+min_confidence = 80
+paths = ["."]

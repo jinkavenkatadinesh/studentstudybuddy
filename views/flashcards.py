@@ -1,8 +1,9 @@
 """Flashcards Generator page."""
 
 import streamlit as st
+
 from components.flashcard import render_flashcard_set
-from config import DEFAULT_NUM_FLASHCARDS, MIN_NUM_FLASHCARDS, MAX_NUM_FLASHCARDS, DIFFICULTY_LEVELS
+from config import DEFAULT_NUM_FLASHCARDS, DIFFICULTY_LEVELS, MAX_NUM_FLASHCARDS, MIN_NUM_FLASHCARDS
 
 
 def render_flashcards():
@@ -33,7 +34,9 @@ def render_flashcards():
 
     col1, col2 = st.columns(2)
     with col1:
-        num_cards = st.slider("Number of Cards", MIN_NUM_FLASHCARDS, MAX_NUM_FLASHCARDS, DEFAULT_NUM_FLASHCARDS, key="fc_num")
+        num_cards = st.slider(
+            "Number of Cards", MIN_NUM_FLASHCARDS, MAX_NUM_FLASHCARDS, DEFAULT_NUM_FLASHCARDS, key="fc_num"
+        )
     with col2:
         difficulty = st.select_slider("Difficulty", DIFFICULTY_LEVELS, value="medium", key="fc_diff")
 
@@ -70,7 +73,15 @@ def render_flashcards():
         col1, col2 = st.columns(2)
         with col1:
             json_data = flashcard_gen.export_json(fc_set) if flashcard_gen else "[]"
-            st.download_button("Download JSON", data=json_data, file_name="flashcards.json", mime="application/json", use_container_width=True)
+            st.download_button(
+                "Download JSON",
+                data=json_data,
+                file_name="flashcards.json",
+                mime="application/json",
+                use_container_width=True,
+            )
         with col2:
             csv_data = flashcard_gen.export_csv(fc_set) if flashcard_gen else ""
-            st.download_button("Download CSV", data=csv_data, file_name="flashcards.csv", mime="text/csv", use_container_width=True)
+            st.download_button(
+                "Download CSV", data=csv_data, file_name="flashcards.csv", mime="text/csv", use_container_width=True
+            )

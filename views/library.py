@@ -1,6 +1,7 @@
 """Document Library page."""
 
 import streamlit as st
+
 from utils.helpers import format_file_size, format_timestamp
 
 
@@ -20,7 +21,7 @@ def render_library():
             '<div class="empty-state">'
             '<div class="empty-state-icon">📚</div>'
             '<div class="empty-state-text">No documents yet. Upload study materials to get started!</div>'
-            '</div>',
+            "</div>",
             unsafe_allow_html=True,
         )
         if st.button("📤 Upload Documents", type="primary"):
@@ -31,9 +32,13 @@ def render_library():
     # Search and filter
     col1, col2 = st.columns([3, 1])
     with col1:
-        search = st.text_input("🔍 Search documents", key="lib_search", placeholder="Search by filename...", label_visibility="collapsed")
+        search = st.text_input(
+            "🔍 Search documents", key="lib_search", placeholder="Search by filename...", label_visibility="collapsed"
+        )
     with col2:
-        filter_type = st.selectbox("Filter", ["All", "PDF", "DOCX", "TXT"], key="lib_filter", label_visibility="collapsed")
+        filter_type = st.selectbox(
+            "Filter", ["All", "PDF", "DOCX", "TXT"], key="lib_filter", label_visibility="collapsed"
+        )
 
     # Filter documents
     filtered = docs
@@ -51,14 +56,17 @@ def render_library():
         with st.container():
             c1, c2 = st.columns([5, 1])
             with c1:
-                st.markdown(f"""
+                st.markdown(
+                    f"""
                 <div class="doc-card">
                     <div class="doc-name">{icon} {doc.filename}</div>
                     <div class="doc-meta">
                         {doc.file_type.upper()} · {format_file_size(doc.file_size)} · {doc.num_chunks} chunks · {format_timestamp(doc.upload_time)}
                     </div>
                 </div>
-                """, unsafe_allow_html=True)
+                """,
+                    unsafe_allow_html=True,
+                )
             with c2:
                 if st.button("🗑️", key=f"del_{doc.id}", help="Delete this document"):
                     if vector_store:

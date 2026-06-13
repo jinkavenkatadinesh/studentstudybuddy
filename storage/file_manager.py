@@ -1,13 +1,13 @@
 """File manager — handles file storage, validation, and duplicate detection."""
 
 from __future__ import annotations
+
 import json
-import shutil
 from pathlib import Path
 
-from config import UPLOAD_DIR, DOCUMENTS_META_FILE, MAX_FILE_SIZE_BYTES, ALLOWED_EXTENSIONS
+from config import ALLOWED_EXTENSIONS, DOCUMENTS_META_FILE, MAX_FILE_SIZE_BYTES, UPLOAD_DIR
 from models.schemas import Document
-from utils.helpers import generate_id, compute_hash, get_file_extension, sanitize_filename
+from utils.helpers import compute_hash, generate_id, get_file_extension, sanitize_filename
 from utils.logger import setup_logger
 
 logger = setup_logger(__name__)

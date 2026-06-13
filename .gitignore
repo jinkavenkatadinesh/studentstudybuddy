@@ -25,3 +25,8 @@ logs/*
 
 # Environment variables
 .env
+
+# Tests and Coverage
+.coverage
+.pytest_cache/
+htmlcov/

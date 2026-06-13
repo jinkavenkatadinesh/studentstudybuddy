@@ -1,8 +1,9 @@
 """Upload Materials page."""
 
 import streamlit as st
-from utils.helpers import format_file_size, get_file_extension, truncate_text
+
 from config import ALLOWED_EXTENSIONS
+from utils.helpers import format_file_size, get_file_extension, truncate_text
 
 
 def render_upload():
@@ -10,8 +11,8 @@ def render_upload():
     st.markdown("### 📤 Upload Study Materials")
     st.markdown(
         '<div style="color:#94A3B8;margin-bottom:1.5rem;">'
-        'Upload your study documents (PDF, DOCX, TXT) to enable AI-powered learning features.'
-        '</div>',
+        "Upload your study documents (PDF, DOCX, TXT) to enable AI-powered learning features."
+        "</div>",
         unsafe_allow_html=True,
     )
 
@@ -61,6 +62,7 @@ def render_upload():
                     ext = get_file_extension(filename)
                     if ext == ".pdf":
                         from parsers.pdf_parser import PDFParser
+
                         parser = PDFParser()
                         text = parser.parse(doc.filepath)
                         meta = parser.extract_metadata(doc.filepath)
@@ -68,12 +70,14 @@ def render_upload():
                         doc.metadata = meta
                     elif ext == ".docx":
                         from parsers.docx_parser import DocxParser
+
                         parser = DocxParser()
                         text = parser.parse(doc.filepath)
                         meta = parser.extract_metadata(doc.filepath)
                         doc.metadata = meta
                     else:
                         from parsers.txt_parser import TxtParser
+
                         parser = TxtParser()
                         text = parser.parse(doc.filepath)
                         meta = parser.extract_metadata(doc.filepath)
@@ -86,6 +90,7 @@ def render_upload():
                 # Chunk text
                 st.write("✂️ Chunking text...")
                 from parsers.processor import TextProcessor
+
                 processor = TextProcessor()
                 chunks = processor.get_full_text_chunks(text, doc.id)
                 doc.num_chunks = len(chunks)

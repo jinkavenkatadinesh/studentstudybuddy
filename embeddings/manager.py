@@ -7,9 +7,8 @@ using a local Sentence Transformer model.
 from __future__ import annotations
 
 import numpy as np
-from functools import lru_cache
-from sentence_transformers import SentenceTransformer
 from langchain_community.embeddings import HuggingFaceEmbeddings
+from sentence_transformers import SentenceTransformer
 
 from config import EMBEDDING_MODEL
 from utils.logger import setup_logger
@@ -50,7 +49,7 @@ class EmbeddingManager:
         Returns:
             Numpy array of shape (embedding_dim,).
         """
-        return self.model.encode(text, show_progress_bar=False)
+        return self.model.encode(text, show_progress_bar=False, convert_to_numpy=True)
 
     def embed_batch(self, texts: list[str], batch_size: int = 64) -> np.ndarray:
         """Generate embeddings for multiple texts.
@@ -71,6 +70,7 @@ class EmbeddingManager:
             batch_size=batch_size,
             show_progress_bar=False,
             normalize_embeddings=True,
+            convert_to_numpy=True,
         )
         return embeddings
 
@@ -91,7 +91,8 @@ class EmbeddingManager:
     @property
     def dimension(self) -> int:
         """Get the embedding dimension."""
-        return self.model.get_sentence_embedding_dimension()
+        dim = self.model.get_sentence_embedding_dimension()
+        return dim if dim is not None else 384
 
 
 def get_embedding_manager(model_name: str = EMBEDDING_MODEL) -> EmbeddingManager:

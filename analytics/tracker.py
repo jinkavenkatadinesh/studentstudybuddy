@@ -1,6 +1,7 @@
 """Analytics tracker — tracks usage statistics and learning metrics."""
 
 from __future__ import annotations
+
 import json
 import time
 from pathlib import Path
@@ -51,15 +52,17 @@ class AnalyticsTracker:
         self._data["quizzes_completed"] += 1
         self._data["total_questions_answered"] += quiz_result.total
         self._data["total_correct"] += quiz_result.score
-        self._data["quiz_history"].append({
-            "topic": quiz_result.quiz.topic,
-            "score": quiz_result.score,
-            "total": quiz_result.total,
-            "percentage": round(quiz_result.percentage, 1),
-            "difficulty": quiz_result.quiz.difficulty,
-            "type": quiz_result.quiz.question_type,
-            "timestamp": time.time(),
-        })
+        self._data["quiz_history"].append(
+            {
+                "topic": quiz_result.quiz.topic,
+                "score": quiz_result.score,
+                "total": quiz_result.total,
+                "percentage": round(quiz_result.percentage, 1),
+                "difficulty": quiz_result.quiz.difficulty,
+                "type": quiz_result.quiz.question_type,
+                "timestamp": time.time(),
+            }
+        )
         # Keep last 100 entries
         self._data["quiz_history"] = self._data["quiz_history"][-100:]
         self._save()

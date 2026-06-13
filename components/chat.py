@@ -1,6 +1,7 @@
 """Chat UI component — ChatGPT-style conversation interface."""
 
 import streamlit as st
+
 from models.schemas import ChatMessage
 
 
@@ -29,10 +30,10 @@ def render_sources(sources: list[dict]):
             score = src.get("score", 0)
             st.markdown(
                 f'<div class="source-citation">'
-                f'<strong>Source {i+1}</strong> — {source_name} '
+                f"<strong>Source {i+1}</strong> — {source_name} "
                 f'<span style="color:#7C3AED;">(relevance: {score:.2f})</span><br>'
                 f'<span style="font-size:0.83rem;">{content}</span>'
-                f'</div>',
+                f"</div>",
                 unsafe_allow_html=True,
             )
 
@@ -44,7 +45,7 @@ def render_chat_history(messages: list[ChatMessage]):
             '<div class="empty-state">'
             '<div class="empty-state-icon">💬</div>'
             '<div class="empty-state-text">Start a conversation with your documents!</div>'
-            '</div>',
+            "</div>",
             unsafe_allow_html=True,
         )
         return

@@ -5,7 +5,8 @@ import streamlit as st
 
 def render_header():
     """Render the app header and inject the global CSS design system."""
-    st.markdown("""
+    st.markdown(
+        """
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
@@ -279,11 +280,16 @@ def render_header():
         .empty-state-icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.5; }
         .empty-state-text { font-size: 1rem; }
     </style>
-    """, unsafe_allow_html=True)
+    """,
+        unsafe_allow_html=True,
+    )
 
-    st.markdown("""
+    st.markdown(
+        """
     <div class="app-header">
         <div class="app-title">📚 Student Study Buddy</div>
         <div class="app-subtitle">Your AI-Powered Learning Assistant</div>
     </div>
-    """, unsafe_allow_html=True)
+    """,
+        unsafe_allow_html=True,
+    )

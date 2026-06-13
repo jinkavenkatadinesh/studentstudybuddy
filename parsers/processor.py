@@ -5,7 +5,7 @@ import unicodedata
 
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
-from config import CHUNK_SIZE, CHUNK_OVERLAP
+from config import CHUNK_OVERLAP, CHUNK_SIZE
 from models.schemas import TextChunk
 from utils.logger import setup_logger
 
@@ -74,12 +74,14 @@ class TextProcessor:
         raw_chunks = self._splitter.split_text(text)
         chunks = []
         for i, chunk_text in enumerate(raw_chunks):
-            chunks.append(TextChunk(
-                content=chunk_text,
-                doc_id=doc_id,
-                chunk_index=i,
-                metadata={"chunk_size": len(chunk_text)},
-            ))
+            chunks.append(
+                TextChunk(
+                    content=chunk_text,
+                    doc_id=doc_id,
+                    chunk_index=i,
+                    metadata={"chunk_size": len(chunk_text)},
+                )
+            )
 
         logger.info("Split document %s into %d chunks", doc_id, len(chunks))
         return chunks
@@ -92,6 +94,7 @@ class TextProcessor:
         """
         try:
             from langdetect import detect
+
             sample = text[:2000]  # Use first 2000 chars for speed
             return detect(sample)
         except Exception:

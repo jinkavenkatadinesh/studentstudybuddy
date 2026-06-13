@@ -6,8 +6,8 @@ for complex layouts or scanned-like PDFs.
 
 from pathlib import Path
 
-from PyPDF2 import PdfReader
 import pdfplumber
+from PyPDF2 import PdfReader
 
 from utils.logger import setup_logger
 

@@ -1,21 +1,25 @@
 """Home Dashboard page."""
 
 import streamlit as st
+
 from components.metrics import render_metric_card
-from utils.helpers import format_timestamp, format_file_size
+from utils.helpers import format_file_size, format_timestamp
 
 
 def render_home():
     """Render the home dashboard page."""
     # Welcome section
-    st.markdown("""
+    st.markdown(
+        """
     <div style="text-align:center;margin:0.5rem 0 2rem;">
         <div style="font-size:1.4rem;font-weight:700;color:#E2E8F0;">Welcome to Your Study Dashboard</div>
         <div style="font-size:1rem;color:#94A3B8;margin-top:0.3rem;">
             Upload materials, generate quizzes, create flashcards, and learn smarter with AI
         </div>
     </div>
-    """, unsafe_allow_html=True)
+    """,
+        unsafe_allow_html=True,
+    )
 
     # Stats row
     stats = st.session_state.get("analytics_stats", None)
@@ -40,7 +44,7 @@ def render_home():
             f'<div class="glass-card" style="display:flex;align-items:center;gap:1rem;">'
             f'<div class="status-online"><span class="status-dot online"></span> AI Online</div>'
             f'<span style="color:#94A3B8;">Model: <strong style="color:#C4B5FD;">{model}</strong></span>'
-            f'</div>',
+            f"</div>",
             unsafe_allow_html=True,
         )
     else:
@@ -48,7 +52,7 @@ def render_home():
             '<div class="glass-card" style="display:flex;align-items:center;gap:1rem;">'
             '<div class="status-offline"><span class="status-dot offline"></span> AI Offline</div>'
             '<span style="color:#94A3B8;">Start Ollama to enable AI features</span>'
-            '</div>',
+            "</div>",
             unsafe_allow_html=True,
         )
 
@@ -65,13 +69,16 @@ def render_home():
     ]
     for col, icon, title, page, desc in actions:
         with col:
-            st.markdown(f"""
+            st.markdown(
+                f"""
             <div class="feature-card">
                 <div class="feature-icon">{icon}</div>
                 <div class="feature-title">{title}</div>
                 <div class="feature-desc">{desc}</div>
             </div>
-            """, unsafe_allow_html=True)
+            """,
+                unsafe_allow_html=True,
+            )
             if st.button(f"Go to {title}", key=f"qa_{page}", use_container_width=True):
                 st.session_state.current_page = page
                 st.rerun()
@@ -87,11 +94,14 @@ def render_home():
             for doc in docs:
                 type_icons = {"pdf": "📕", "docx": "📘", "txt": "📄"}
                 icon = type_icons.get(doc.file_type, "📄")
-                st.markdown(f"""
+                st.markdown(
+                    f"""
                 <div class="doc-card">
                     <div class="doc-name">{icon} {doc.filename}</div>
                     <div class="doc-meta">
                         {format_file_size(doc.file_size)} · {doc.num_chunks} chunks · {format_timestamp(doc.upload_time)}
                     </div>
                 </div>
-                """, unsafe_allow_html=True)
+                """,
+                    unsafe_allow_html=True,
+                )

@@ -5,7 +5,7 @@ import sys
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
 
-from config import LOG_DIR, LOG_LEVEL, LOG_FORMAT, LOG_DATE_FORMAT
+from config import LOG_DATE_FORMAT, LOG_DIR, LOG_FORMAT, LOG_LEVEL
 
 _loggers: dict[str, logging.Logger] = {}
 

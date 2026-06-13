@@ -1,8 +1,9 @@
 """Ask Your Documents — Chat page with RAG."""
 
 import streamlit as st
+
+from components.chat import render_chat_history
 from models.schemas import ChatMessage
-from components.chat import render_chat_history, render_sources
 
 
 def render_chat():
@@ -22,7 +23,7 @@ def render_chat():
             '<div class="empty-state">'
             '<div class="empty-state-icon">💬</div>'
             '<div class="empty-state-text">Upload documents first to start chatting with them!</div>'
-            '</div>',
+            "</div>",
             unsafe_allow_html=True,
         )
         if st.button("📤 Upload Documents", type="primary"):

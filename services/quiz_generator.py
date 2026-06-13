@@ -1,14 +1,15 @@
 """Quiz generator — generates MCQ and True/False quizzes from documents."""
 
 from __future__ import annotations
+
 import json
 import re
 
+from config import DEFAULT_MODEL, DEFAULT_TEMPERATURE
 from models.schemas import Question, Quiz, QuizResult
 from rag.pipeline import RAGPipeline
 from rag.prompts import QUIZ_MCQ_PROMPT, QUIZ_TRUE_FALSE_PROMPT
 from services.ai_manager import AIManager
-from config import DEFAULT_MODEL, DEFAULT_TEMPERATURE
 from utils.logger import setup_logger
 
 logger = setup_logger(__name__)
@@ -34,14 +35,12 @@ class QuizGenerator:
         if not context:
             raise ValueError("No content found for this document.")
 
-        prompt = QUIZ_MCQ_PROMPT.format(
-            num_questions=num_questions, difficulty=difficulty, context=context
-        )
+        prompt = QUIZ_MCQ_PROMPT.format(num_questions=num_questions, difficulty=difficulty, context=context)
         raw = self.ai.generate(prompt, model=model, temperature=temperature)
         questions = self._parse_questions(raw, "mcq")
 
         return Quiz(
-            topic=f"Quiz from document",
+            topic="Quiz from document",
             questions=questions[:num_questions],
             difficulty=difficulty,
             doc_id=doc_id,
@@ -61,14 +60,12 @@ class QuizGenerator:
         if not context:
             raise ValueError("No content found for this document.")
 
-        prompt = QUIZ_TRUE_FALSE_PROMPT.format(
-            num_questions=num_questions, difficulty=difficulty, context=context
-        )
+        prompt = QUIZ_TRUE_FALSE_PROMPT.format(num_questions=num_questions, difficulty=difficulty, context=context)
         raw = self.ai.generate(prompt, model=model, temperature=temperature)
         questions = self._parse_questions(raw, "true_false")
 
         return Quiz(
-            topic=f"True/False Quiz",
+            topic="True/False Quiz",
             questions=questions[:num_questions],
             difficulty=difficulty,
             doc_id=doc_id,
@@ -161,14 +158,16 @@ class QuizGenerator:
                 else:
                     correct = options[0]
 
-            questions.append(Question(
-                question=q_text,
-                options=options,
-                correct_answer=correct,
-                explanation=explanation,
-                difficulty=item.get("difficulty", "medium"),
-                question_type=q_type,
-            ))
+            questions.append(
+                Question(
+                    question=q_text,
+                    options=options,
+                    correct_answer=correct,
+                    explanation=explanation,
+                    difficulty=item.get("difficulty", "medium"),
+                    question_type=q_type,
+                )
+            )
 
         if not questions:
             raise ValueError("No valid questions found in AI response.")
