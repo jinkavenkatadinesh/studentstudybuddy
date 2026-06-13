@@ -92,6 +92,17 @@ def _init_services():
 
     if st.session_state.ollama_available:
         st.session_state.ollama_models = ollama_mgr.list_models()
+        # Auto-pull default model if missing
+        from config import DEFAULT_MODEL
+
+        model_exists = any(DEFAULT_MODEL in m for m in st.session_state.ollama_models)
+        if not model_exists:
+            with st.spinner(f"📥 Downloading local model '{DEFAULT_MODEL}' (~1.6GB)... This may take a few minutes."):
+                try:
+                    ollama_mgr.pull_model(DEFAULT_MODEL)
+                    st.session_state.ollama_models = ollama_mgr.list_models()
+                except Exception as e:
+                    st.error(f"Failed to auto-download '{DEFAULT_MODEL}': {e}")
     else:
         st.session_state.ollama_models = []
 

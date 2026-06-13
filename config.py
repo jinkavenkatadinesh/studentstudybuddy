@@ -24,11 +24,10 @@ for _dir in [DATA_DIR, UPLOAD_DIR, VECTOR_DIR, LOG_DIR]:
 
 # ── AI Providers Configuration ────────────────────────────────────────────────
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
-DEFAULT_MODEL = "qwen3:8b"
+DEFAULT_MODEL = "gemma2:2b"
 AVAILABLE_MODELS = [
-    "qwen3:8b",
-    "qwen2.5-coder",
-    "mistral",
+    "gemma2:2b",
+    "phi3:mini",
     "llama3",
 ]
 

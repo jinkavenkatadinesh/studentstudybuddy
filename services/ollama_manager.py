@@ -40,6 +40,16 @@ class OllamaManager:
             logger.error("Failed to list models: %s", e)
             return []
 
+    def pull_model(self, model: str) -> None:
+        """Pull a model from Ollama."""
+        try:
+            logger.info("Starting pull for model: %s", model)
+            self._client.pull(model)
+            logger.info("Successfully pulled model: %s", model)
+        except Exception as e:
+            logger.error("Failed to pull model %s: %s", model, e)
+            raise RuntimeError(f"Failed to pull model {model}: {e}")
+
     def generate(
         self,
         prompt: str,
