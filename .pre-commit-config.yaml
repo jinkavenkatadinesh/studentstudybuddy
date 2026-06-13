@@ -37,3 +37,22 @@ repos:
     hooks:
       - id: pip-audit
         args: ["-r", "requirements.txt"]
+
+  - repo: https://github.com/PyCQA/pylint
+    rev: v3.0.3
+    hooks:
+      - id: pylint
+        args: ["--disable=all", "--enable=E,F"]
+
+  - repo: https://github.com/returntocorp/semgrep
+    rev: v1.60.0
+    hooks:
+      - id: semgrep
+        args: ["--config=auto", "--error", "--skip-unknown-extensions"]
+
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.15.0
+    hooks:
+      - id: pyupgrade
+        args: ["--py310-plus"]
+

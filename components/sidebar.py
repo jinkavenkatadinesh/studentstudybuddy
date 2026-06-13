@@ -110,6 +110,7 @@ def render_sidebar():
                 )
 
         # Dynamic Model List based on selected provider
+        all_models = []
         if selected_provider == "ollama":
             available = st.session_state.get("ollama_models", [])
             all_models = list(dict.fromkeys(available + AVAILABLE_MODELS))

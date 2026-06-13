@@ -25,7 +25,7 @@ class FileManager:
     def _load_metadata(self):
         if DOCUMENTS_META_FILE.exists():
             try:
-                with open(DOCUMENTS_META_FILE, "r") as f:
+                with open(DOCUMENTS_META_FILE) as f:
                     data = json.load(f)
                 for d in data:
                     doc = Document.from_dict(d)

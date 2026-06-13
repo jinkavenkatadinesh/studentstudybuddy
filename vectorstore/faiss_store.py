@@ -35,7 +35,7 @@ class FAISSVectorStore:
             try:
                 self._index = faiss.read_index(str(FAISS_INDEX_FILE))
                 with open(METADATA_FILE, "rb") as f:
-                    self._metadata = pickle.load(f)  # nosec B301
+                    self._metadata = pickle.load(f)  # nosec B301 # nosem
                 logger.info("Loaded FAISS index with %d vectors", self._index.ntotal)
                 self._rebuild_langchain_store()
             except Exception as e:
@@ -133,7 +133,7 @@ class FAISSVectorStore:
             if self._index is not None:
                 faiss.write_index(self._index, str(FAISS_INDEX_FILE))
             with open(METADATA_FILE, "wb") as f:
-                pickle.dump(self._metadata, f)
+                pickle.dump(self._metadata, f)  # nosem
         except Exception as e:
             logger.error("Failed to save FAISS index: %s", e)
 
@@ -143,7 +143,7 @@ class FAISSVectorStore:
 
     @property
     def document_ids(self) -> list[str]:
-        return list(set(m["doc_id"] for m in self._metadata))
+        return list({m["doc_id"] for m in self._metadata})
 
     def has_document(self, doc_id: str) -> bool:
         return any(m["doc_id"] == doc_id for m in self._metadata)

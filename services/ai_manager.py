@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import os
-from typing import Generator
+from collections.abc import Generator
 
 import streamlit as st
 from google import genai
@@ -103,7 +103,7 @@ class AIManager:
         model: str,
         temperature: float = DEFAULT_TEMPERATURE,
         system: str = "",
-    ) -> Generator[str, None, None]:
+    ) -> Generator[str]:
         """Stream response chunks from the active provider."""
         provider = self._get_provider()
         api_key = self._get_api_key(provider)

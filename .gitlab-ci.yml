@@ -36,6 +36,22 @@ ruff-lint:
   script:
     - ruff check .
 
+pylint-lint:
+  stage: lint
+  image: python:3.10-slim
+  script:
+    - pip install pylint
+    - pylint $(find . -name "*.py" -not -path "*/.*" -not -path "./venv/*") --disable=all --enable=E,F
+
+semgrep-scan:
+  stage: lint
+  image:
+    name: returntocorp/semgrep:latest
+    entrypoint: [""]
+  before_script: []
+  script:
+    - semgrep scan --config=auto --error --skip-unknown-extensions
+
 gitleaks-scan:
   stage: lint
   image:
@@ -51,6 +67,14 @@ ruff-format:
   image: python:3.10-slim
   script:
     - ruff format --check .
+
+pyupgrade-check:
+  stage: format
+  image: python:3.10-slim
+  script:
+    - pip install pyupgrade
+    - pyupgrade --py310-plus $(find . -name "*.py" -not -path "*/.*" -not -path "./venv/*")
+
 
 # ── Type Check Stage ──────────────────────────────────────────────────────────
 mypy-typecheck:

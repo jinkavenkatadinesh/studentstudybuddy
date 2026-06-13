@@ -96,13 +96,12 @@ class RAGPipeline:
         context = "\n\n".join(context_parts)
         prompt = QA_PROMPT.format(context=context, question=question)
 
-        for chunk in self.ai_manager.stream_generate(
+        yield from self.ai_manager.stream_generate(
             prompt=prompt,
             model=model,
             temperature=temperature,
             system=CHAT_SYSTEM_PROMPT,
-        ):
-            yield chunk
+        )
 
         # Yield sources as the final item
         yield sources

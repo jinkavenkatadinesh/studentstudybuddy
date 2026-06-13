@@ -32,7 +32,7 @@ class AnalyticsTracker:
         path = Path(ANALYTICS_FILE)
         if path.exists():
             try:
-                with open(path, "r") as f:
+                with open(path) as f:
                     self._data.update(json.load(f))
             except Exception as e:
                 logger.error("Failed to load analytics: %s", e)
